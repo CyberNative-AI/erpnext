@@ -1,0 +1,102 @@
+name: Repro workstation type sequence
+
+on:
+  push:
+    branches:
+      - repro/workstation-type-sequence
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      NODE_ENV: "production"
+      TEST_MODULE: erpnext.manufacturing.doctype.workstation_type.test_workstation_type
+    strategy:
+      fail-fast: false
+      matrix:
+        arm: [develop, control]
+    services:
+      mysql:
+        image: mariadb:10.6
+        env:
+          MARIADB_ROOT_PASSWORD: 'root'
+        ports:
+          - 3306:3306
+        options: --health-cmd="mariadb-admin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+    steps:
+      - name: Clone
+        uses: actions/checkout@v6
+
+      - name: Control arm patch
+        if: matrix.arm == 'control'
+        run: python .github/repro/control.py erpnext/manufacturing/doctype/job_card/job_card.py
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          check-latest: true
+
+      - name: Add to Hosts
+        run: echo "127.0.0.1 test_site" | sudo tee -a /etc/hosts
+
+      - name: Install
+        run: bash ${GITHUB_WORKSPACE}/.github/helper/install.sh
+        env:
+          DB: mariadb
+          TYPE: server
+          FRAPPE_BRANCH: b53b0911ffcca3826745e3418b415edf268b49fb
+          CI_GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Run test module
+        run: |
+          cd ~/frappe-bench/
+          bench --site test_site set-config allow_tests true
+          set -o pipefail
+          bench --site test_site run-tests --module "$TEST_MODULE" --lightmode 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+
+      - name: Upload test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-output-${{ matrix.arm }}
+          path: ${{ runner.temp }}/test-output.txt
+          if-no-files-found: warn
+
+  results:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+      - name: Push results branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" > out/jobs.json
+          printf '%s\n' "run ${GITHUB_RUN_ID} attempt ${GITHUB_RUN_ATTEMPT} sha ${GITHUB_SHA}" > out/RUN.txt
+          cd out
+          git init -q
+          git config user.name "CyberNative AI LLC"
+          git config user.email "hello@cybernative.ai"
+          git add -A
+          git commit -q -m "Test results for run ${GITHUB_RUN_ID}"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c http.extraheader="AUTHORIZATION: basic $auth" push -q \
+            "https://github.com/${GITHUB_REPOSITORY}" "HEAD:refs/heads/results/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"

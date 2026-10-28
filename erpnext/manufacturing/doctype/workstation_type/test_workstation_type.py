@@ -2,6 +2,7 @@
 # See license.txt
 
 import frappe
+from frappe.utils import get_datetime
 
 from erpnext.manufacturing.doctype.operation.test_operation import make_operation
 from erpnext.manufacturing.doctype.production_plan.test_production_plan import make_bom
@@ -97,6 +98,83 @@ class TestWorkstationType(ERPNextTestSuite):
 
 		self.assertEqual(frappe.db.get_value("Workstation", follows_type.name, "hour_rate"), 800)
 		self.assertEqual(frappe.db.get_value("Workstation", own_rate.name, "hour_rate"), 650)
+
+	@ERPNextTestSuite.change_settings(
+		"Manufacturing Settings",
+		{"disable_capacity_planning": 0, "allow_overtime": 0, "mins_between_operations": 10},
+	)
+	def test_type_only_operation_does_not_start_before_previous_operation_ends(self):
+		shift = {"start_time": "08:00:00", "end_time": "20:00:00"}
+		workstation_type = create_workstation_type(workstation_type="_Test WT Sequence").name
+		for name in ("_Test WS Sequence A", "_Test WS Sequence B"):
+			workstation = make_workstation(workstation_name=name, workstation_type=workstation_type)
+			workstation.append("working_hours", shift)
+			workstation.save()
+
+		first_workstation = make_workstation(workstation_name="_Test WS Sequence First")
+		first_workstation.append("working_hours", shift)
+		first_workstation.save()
+
+		first_operation = make_operation(operation="_Test Op Sequence First").name
+		second_operation = make_operation(operation="_Test Op Sequence Second").name
+		long_operation = make_operation(operation="_Test Op Sequence Long").name
+
+		# A job of another work order keeps workstation A busy from 08:00 to 12:00.
+		long_item = make_item("_Test FG Sequence Long", {"is_stock_item": 1}).name
+		long_rm = make_item("_Test RM Sequence Long", {"is_stock_item": 1}).name
+		long_bom = make_bom(item=long_item, raw_materials=[long_rm], with_operations=1, do_not_submit=True)
+		long_bom.append(
+			"operations",
+			{
+				"operation": long_operation,
+				"workstation_type": workstation_type,
+				"time_in_mins": 240,
+				"hour_rate": 100,
+			},
+		)
+		long_bom.submit()
+		make_wo_order_test_record(
+			item=long_item, bom_no=long_bom.name, qty=1, planned_start_date="2031-03-05 08:00:00"
+		)
+
+		fg_item = make_item("_Test FG Sequence", {"is_stock_item": 1}).name
+		rm_item = make_item("_Test RM Sequence", {"is_stock_item": 1}).name
+		bom = make_bom(item=fg_item, raw_materials=[rm_item], with_operations=1, do_not_submit=True)
+		bom.append(
+			"operations",
+			{
+				"operation": first_operation,
+				"workstation": first_workstation.name,
+				"time_in_mins": 60,
+				"hour_rate": 100,
+			},
+		)
+		bom.append(
+			"operations",
+			{
+				"operation": second_operation,
+				"workstation_type": workstation_type,
+				"time_in_mins": 60,
+				"hour_rate": 100,
+			},
+		)
+		bom.submit()
+
+		work_order = make_wo_order_test_record(
+			item=fg_item, bom_no=bom.name, qty=1, planned_start_date="2031-03-05 08:00:00"
+		)
+
+		first = frappe.get_doc("Job Card", {"work_order": work_order.name, "operation": first_operation})
+		second = frappe.get_doc("Job Card", {"work_order": work_order.name, "operation": second_operation})
+		first_end = get_datetime(first.scheduled_time_logs[-1].to_time)
+		second_start = get_datetime(second.scheduled_time_logs[0].from_time)
+
+		self.assertGreaterEqual(
+			second_start,
+			first_end,
+			f"{second_operation} is scheduled on {second.workstation} from {second_start}, "
+			f"before {first_operation} ends at {first_end}",
+		)
 
 
 def create_workstation_type(**args):
