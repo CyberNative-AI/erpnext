@@ -1,0 +1,235 @@
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/ci/frappe/.git/
+From https://github.com/frappe/frappe
+ * branch            b53b0911ffcca3826745e3418b415edf268b49fb -> FETCH_HEAD
+~/frappe ~
+Note: switching to 'FETCH_HEAD'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at b53b091 Merge pull request #45713 from kaulith/fix/doctype-settings-untranslated-doctype
+~
+Setting Up Environment
+$ uv venv env --seed --python /usr/local/bin/python
+Using CPython 3.14.6 interpreter at: /usr/local/bin/python
+Creating virtual environment with seed packages at: env
+ + pip==26.2.2
+Getting frappe
+$ git clone /home/ci/frappe  --depth 1 --origin upstream
+Cloning into 'frappe'...
+warning: --depth is ignored in local clones; use file:// instead.
+Note: switching to 'b53b0911ffcca3826745e3418b415edf268b49fb'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+Installing frappe
+$ uv pip install --quiet -e /home/ci/frappe-bench/apps/frappe  --python /home/ci/frappe-bench/env/bin/python
+$ yarn install --check-files
+yarn install v1.22.22
+[1/5] Validating package.json...
+[2/5] Resolving packages...
+[3/5] Fetching packages...
+[4/5] Linking dependencies...
+[5/5] Building fresh packages...
+Done in 14.78s.
+Found existing apps updating states...
+SUCCESS: Bench frappe-bench initialized
+INFO: A newer version of bench is available: 5.31.0 → 5.31.1
+✔ Application Assets Linked
+
+yarn run v1.22.22
+$ node esbuild --production --apps frappe --run-build-command
+ DONE  Total Build Time: 4.463s
+ WARN  Cannot connect to redis_cache to update assets_json
+ WARN  Cannot connect to redis_cache to update assets_json
+ WARN  Cannot connect to redis_cache to update assets_json
+✔ studio built in 33.6s
+✔ flow built in 23.8s
+Done in 62.51s.
+[island] installing the island toolchain at /home/ci/frappe-bench/apps/frappe/island-toolchain
+yarn install v1.22.22
+[1/4] Resolving packages...
+[2/4] Fetching packages...
+[3/4] Linking dependencies...
+warning " > autoprefixer@10.5.5" has unmet peer dependency "postcss@^8.1.0".
+[4/4] Building fresh packages...
+Done in 11.93s.
+[island] building 1 island(s) for frappe [mode=production]
+[33mThe `envFile` option is deprecated, please use `envDir: false` instead.[39m
+[island] frappe.chart: 1042.9 kB raw / 348.2 kB gzip JS, 109.0 kB raw / 18.9 kB gzip CSS
+[island] cannot reach redis_cache to invalidate assets_json
+[island] frappe.chart.island.js → /assets/frappe/dist/island/frappe.chart.island.DRUcK7Um.js
+[island] frappe.chart.island.css → /assets/frappe/dist/island/frappe.island.DBsJOuA3.css
+[33m[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[33m[33m[PLUGIN_TIMINGS] [0mPlugin hooks ran for 3.1s of this 3.5s build (89%).
+The slowest hooks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - vite:css transform (65%, 2.3s, 18 calls)
+Additional hook time came from hooks under 1s.
+See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
+[39m
+[island] building 3 island(s) for frappe [mode=production]
+[33mThe `envFile` option is deprecated, please use `envDir: false` instead.[39m
+[island] frappe.page.notifications: 240.9 kB raw / 86.8 kB gzip JS, 176.2 kB raw / 22.5 kB gzip CSS
+[island] frappe.page.profile: 225.1 kB raw / 81.5 kB gzip JS, 176.2 kB raw / 22.5 kB gzip CSS
+[island] frappe.page.search: 157.3 kB raw / 60.0 kB gzip JS, 176.2 kB raw / 22.5 kB gzip CSS
+[island] cannot reach redis_cache to invalidate assets_json
+[island] frappe.page.notifications.island.js → /assets/frappe/dist/page-island/frappe.page.notifications.island.6bJIvc3z.js
+[island] frappe.page.notifications.island.css → /assets/frappe/dist/page-island/frappe.island.B1nS8NV8.css
+[island] frappe.page.profile.island.js → /assets/frappe/dist/page-island/frappe.page.profile.island.DYUPg8y5.js
+[island] frappe.page.profile.island.css → /assets/frappe/dist/page-island/frappe.island.B1nS8NV8.css
+[island] frappe.page.search.island.js → /assets/frappe/dist/page-island/frappe.page.search.island.BE_ZRtyR.js
+[island] frappe.page.search.island.css → /assets/frappe/dist/page-island/frappe.island.B1nS8NV8.css
+
+Building Studio Apps...
+Chromium is not available. downloading...
+Downloading Chromium from https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.35/linux64/chrome-headless-shell-linux64.zip...
+Downloading Chromium
+Extracting Chromium...
+Renaming /home/ci/frappe-bench/chromium/chrome-headless-shell-linux64 to /home/ci/frappe-bench/chromium/chrome-linux
+Making Chromium executable: /home/ci/frappe-bench/chromium/chrome-linux/headless_shell
+Chromium executable permissions set: /home/ci/frappe-bench/chromium/chrome-linux/headless_shell
+Chromium is ready to use at: /home/ci/frappe-bench/chromium
+Chromium is already set up at /home/ci/frappe-bench/chromium/chrome-linux/headless_shell
+mysqld is alive
+mysqld is alive
+::group::Get payments app
+Thu Oct 29 02:27:28 UTC 2026
+Getting payments
+$ git clone https://github.com/frappe/payments.git --branch develop --depth 1 --origin upstream
+Cloning into 'payments'...
+Ignoring dependencies of payments. To install dependencies use --resolve-deps
+Installing payments
+$ uv pip install --quiet -e /home/ci/frappe-bench/apps/payments  --python /home/ci/frappe-bench/env/bin/python
+$ bench build --app payments
+✔ Application Assets Linked
+
+yarn run v1.22.22
+$ node esbuild --production --apps payments --run-build-command
+ DONE  Total Build Time: 39.13ms
+ WARN  Cannot connect to redis_cache to update assets_json
+ WARN  Cannot connect to redis_cache to update assets_json
+Done in 0.79s.
+[island] framework islands are unchanged since the last build, so reusing them
+[island] page islands are unchanged since the last build, so reusing them
+
+Building Studio Apps...
+INFO: A newer version of bench is available: 5.31.0 → 5.31.1
+Thu Oct 29 02:27:32 UTC 2026
+::endgroup::
+::group::Get erpnext app
+Thu Oct 29 02:27:32 UTC 2026
+Getting erpnext
+$ git clone /__w/erpnext/erpnext --branch repro/workstation-type-sequence --depth 1 --origin upstream
+Cloning into 'erpnext'...
+warning: --depth is ignored in local clones; use file:// instead.
+Ignoring dependencies of /__w/erpnext/erpnext. To install dependencies use --resolve-deps
+Installing erpnext
+$ uv pip install --quiet -e /home/ci/frappe-bench/apps/erpnext  --python /home/ci/frappe-bench/env/bin/python
+$ yarn install --check-files
+yarn install v1.22.22
+[1/4] Resolving packages...
+[2/4] Fetching packages...
+[3/4] Linking dependencies...
+[4/4] Building fresh packages...
+$ cd banking && yarn install
+yarn install v1.22.22
+[1/4] Resolving packages...
+[2/4] Fetching packages...
+[3/4] Linking dependencies...
+warning Workspaces can only be enabled in private projects.
+warning Workspaces can only be enabled in private projects.
+warning Workspaces can only be enabled in private projects.
+warning Workspaces can only be enabled in private projects.
+warning Workspaces can only be enabled in private projects.
+warning Workspaces can only be enabled in private projects.
+warning Workspaces can only be enabled in private projects.
+warning Workspaces can only be enabled in private projects.
+warning Workspaces can only be enabled in private projects.
+warning Workspaces can only be enabled in private projects.
+[4/4] Building fresh packages...
+Done in 11.67s.
+Done in 13.48s.
+$ bench build --app erpnext
+✔ Application Assets Linked
+
+yarn run v1.22.22
+$ node esbuild --production --apps erpnext --run-build-command
+ DONE  Total Build Time: 329.779ms
+ WARN  Cannot connect to redis_cache to update assets_json
+ WARN  Cannot connect to redis_cache to update assets_json
+ WARN  Cannot connect to redis_cache to update assets_json
+Running build commands for 1 app(s) sequentially...
+✔ erpnext built in 1.9s
+Build commands finished.
+Done in 2.87s.
+[island] framework islands are unchanged since the last build, so reusing them
+[island] page islands are unchanged since the last build, so reusing them
+
+Building Studio Apps...
+INFO: A newer version of bench is available: 5.31.0 → 5.31.1
+Thu Oct 29 02:28:13 UTC 2026
+::endgroup::
+::group::Setup dev requirements
+Thu Oct 29 02:28:13 UTC 2026
+$ uv pip install --quiet coverage~=7.14.1 pyperf==2.8.1 pyngrok~=8.1.2 unittest-xml-reporting~=4.0.0 watchdog~=6.0.0 hypothesis~=6.155.2 responses==0.23.1 freezegun~=1.5.5  --python /home/ci/frappe-bench/env/bin/python
+INFO: A newer version of bench is available: 5.31.0 → 5.31.1
+Thu Oct 29 02:28:14 UTC 2026
+::endgroup::
+::group::Reinstall test site
+Thu Oct 29 02:28:15 UTC 2026
+
+Installing frappe...
+Updating DocTypes for frappe.................................................................................................................................................................................................................................................................................................................................................................................................................................
+Updating Dashboard for frappe
+
+Installing payments...
+Updating DocTypes for payments..........
+* Installing Payment Custom Fields in Web Form
+Updating Dashboard for payments
+
+Installing erpnext...
+Updating DocTypes for erpnext................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+Address / Accounts Manager: granted read
+Updating Dashboard for erpnext
+*** Scheduler is disabled ***
+Thu Oct 29 02:29:25 UTC 2026
+::endgroup::

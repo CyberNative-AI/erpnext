@@ -1,0 +1,1 @@
+MariaDB up in-container (datadir=/home/ci/db-ram/data, fresh=1)

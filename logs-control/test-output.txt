@@ -1,0 +1,21 @@
+b6c93efc881d40231f8717f312c34a391fa24a5e
+821:				args.planned_start_time = max(get_datetime(data.planned_start_time), get_datetime(args.from_time))
+823:				args.planned_start_time = get_datetime(data.to_time + get_mins_between_operations())
+ERROR	Property: Invalid value for "CSS Level 2.1" property: flex [1:774: display]
+WARNING	Property: Unknown Property name. [1:787: align-items]
+ERROR	PropertyValue: Missing token for production Choice(ColorValue, Dimension, URIValue, Value, variable, MSValue, CSSCalc, function): ('HASH', '#0000001a', 1, 5287)
+ERROR	PropertyValue: Unknown syntax or no value: 0 3px 6px #0000001a
+ERROR	CSSStyleDeclaration: Syntax Error in Property: box-shadow:0 3px 6px #0000001a
+WARNING	Property: Unknown Property name. [1:10174: word-break]
+WARNING	Property: Unknown Property name. [1:1: word-break]
+
+erpnext.manufacturing.doctype.workstation_type.test_workstation_type.TestWorkstationType
+   ✔  test_disabled_workstation_not_picked_for_type_only_operation
+   ✔  test_type_cost_change_reaches_its_workstations
+   ✔  test_type_only_operation_does_not_start_before_previous_operation_ends
+   ✔  test_type_without_enabled_workstation_gives_a_clear_error
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.075s
+
+OK

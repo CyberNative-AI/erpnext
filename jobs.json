@@ -1,0 +1,321 @@
+{
+  "total_count": 3,
+  "jobs": [
+    {
+      "id": 123225333616,
+      "run_id": 40806108530,
+      "workflow_name": "Repro workstation type sequence",
+      "head_branch": "repro/workstation-type-sequence",
+      "run_url": "https://api.github.com/repos/CyberNative-AI/erpnext/actions/runs/40806108530",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVbI-Oc8AAAAcsM1fcA",
+      "head_sha": "04bd73e5ec1e16f12128882d6d32019e23f2ba5f",
+      "url": "https://api.github.com/repos/CyberNative-AI/erpnext/actions/jobs/123225333616",
+      "html_url": "https://github.com/CyberNative-AI/erpnext/actions/runs/40806108530/job/123225333616",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-29T02:23:59Z",
+      "started_at": "2026-10-29T02:24:01Z",
+      "completed_at": "2026-10-29T02:31:42Z",
+      "name": "test (control)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-29T02:24:02Z",
+          "completed_at": "2026-10-29T02:24:03Z"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-29T02:24:03Z",
+          "completed_at": "2026-10-29T02:25:09Z"
+        },
+        {
+          "name": "Clone",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-29T02:25:09Z",
+          "completed_at": "2026-10-29T02:25:13Z"
+        },
+        {
+          "name": "Control arm patch",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-29T02:25:13Z",
+          "completed_at": "2026-10-29T02:25:13Z"
+        },
+        {
+          "name": "Prepare",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-29T02:25:13Z",
+          "completed_at": "2026-10-29T02:25:13Z"
+        },
+        {
+          "name": "Start DB",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-29T02:25:13Z",
+          "completed_at": "2026-10-29T02:25:18Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-29T02:25:18Z",
+          "completed_at": "2026-10-29T02:29:22Z"
+        },
+        {
+          "name": "Run test module",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-29T02:29:22Z",
+          "completed_at": "2026-10-29T02:31:12Z"
+        },
+        {
+          "name": "Report",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-29T02:31:12Z",
+          "completed_at": "2026-10-29T02:31:12Z"
+        },
+        {
+          "name": "Upload logs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-29T02:31:12Z",
+          "completed_at": "2026-10-29T02:31:13Z"
+        },
+        {
+          "name": "Post Clone",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-29T02:31:13Z",
+          "completed_at": "2026-10-29T02:31:14Z"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-29T02:31:14Z",
+          "completed_at": "2026-10-29T02:31:39Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-29T02:31:39Z",
+          "completed_at": "2026-10-29T02:31:39Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/CyberNative-AI/erpnext/check-runs/123225333616",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001728,
+      "runner_name": "GitHub Actions 1000001728",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 123225333940,
+      "run_id": 40806108530,
+      "workflow_name": "Repro workstation type sequence",
+      "head_branch": "repro/workstation-type-sequence",
+      "run_url": "https://api.github.com/repos/CyberNative-AI/erpnext/actions/runs/40806108530",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVbI-Oc8AAAAcsM1gtA",
+      "head_sha": "04bd73e5ec1e16f12128882d6d32019e23f2ba5f",
+      "url": "https://api.github.com/repos/CyberNative-AI/erpnext/actions/jobs/123225333940",
+      "html_url": "https://github.com/CyberNative-AI/erpnext/actions/runs/40806108530/job/123225333940",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-29T02:23:59Z",
+      "started_at": "2026-10-29T02:24:01Z",
+      "completed_at": "2026-10-29T02:31:43Z",
+      "name": "test (develop)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-29T02:24:02Z",
+          "completed_at": "2026-10-29T02:24:02Z"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-29T02:24:02Z",
+          "completed_at": "2026-10-29T02:25:05Z"
+        },
+        {
+          "name": "Clone",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-29T02:25:05Z",
+          "completed_at": "2026-10-29T02:25:08Z"
+        },
+        {
+          "name": "Control arm patch",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-10-29T02:25:08Z",
+          "completed_at": "2026-10-29T02:25:08Z"
+        },
+        {
+          "name": "Prepare",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-29T02:25:08Z",
+          "completed_at": "2026-10-29T02:25:08Z"
+        },
+        {
+          "name": "Start DB",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-29T02:25:08Z",
+          "completed_at": "2026-10-29T02:25:12Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-29T02:25:12Z",
+          "completed_at": "2026-10-29T02:29:25Z"
+        },
+        {
+          "name": "Run test module",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-10-29T02:29:25Z",
+          "completed_at": "2026-10-29T02:31:14Z"
+        },
+        {
+          "name": "Report",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-29T02:31:14Z",
+          "completed_at": "2026-10-29T02:31:14Z"
+        },
+        {
+          "name": "Upload logs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-29T02:31:14Z",
+          "completed_at": "2026-10-29T02:31:15Z"
+        },
+        {
+          "name": "Post Clone",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-29T02:31:15Z",
+          "completed_at": "2026-10-29T02:31:16Z"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-29T02:31:16Z",
+          "completed_at": "2026-10-29T02:31:41Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-29T02:31:41Z",
+          "completed_at": "2026-10-29T02:31:41Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/CyberNative-AI/erpnext/check-runs/123225333940",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001729,
+      "runner_name": "GitHub Actions 1000001729",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 123227848993,
+      "run_id": 40806108530,
+      "workflow_name": "Repro workstation type sequence",
+      "head_branch": "repro/workstation-type-sequence",
+      "run_url": "https://api.github.com/repos/CyberNative-AI/erpnext/actions/runs/40806108530",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVbI-Oc8AAAAcsPPBIQ",
+      "head_sha": "04bd73e5ec1e16f12128882d6d32019e23f2ba5f",
+      "url": "https://api.github.com/repos/CyberNative-AI/erpnext/actions/jobs/123227848993",
+      "html_url": "https://github.com/CyberNative-AI/erpnext/actions/runs/40806108530/job/123227848993",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-29T02:31:43Z",
+      "started_at": "2026-10-29T02:31:45Z",
+      "completed_at": null,
+      "name": "results",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-29T02:31:46Z",
+          "completed_at": "2026-10-29T02:31:47Z"
+        },
+        {
+          "name": "Run actions/download-artifact@v4",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 2,
+          "started_at": "2026-10-29T02:31:47Z",
+          "completed_at": null
+        },
+        {
+          "name": "Push results branch",
+          "status": "pending",
+          "conclusion": null,
+          "number": 3,
+          "started_at": null,
+          "completed_at": null
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/CyberNative-AI/erpnext/check-runs/123227848993",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001730,
+      "runner_name": "GitHub Actions 1000001730",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}
