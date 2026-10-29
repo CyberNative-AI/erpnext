@@ -8,68 +8,116 @@ on:
 permissions:
   contents: read
 
+env:
+  TZ: 'Asia/Kolkata'
+  DEBIAN_FRONTEND: noninteractive
+  NODE_ENV: "production"
+  ERPNEXT_CI_USER: ci
+  PIP_CACHE_DIR: /home/ci/.cache/pip
+  npm_config_cache: /home/ci/.cache/npm
+  YARN_CACHE_FOLDER: /home/ci/.cache/yarn
+  UV_CACHE_DIR: /home/ci/.cache/uv
+  UV_LINK_MODE: copy
+  TEST_MODULE: erpnext.manufacturing.doctype.workstation_type.test_workstation_type
+
 jobs:
+  # Same CI image and install path as the upstream server-tests-mariadb setup job,
+  # on a GitHub-hosted runner, running one test module only.
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    env:
-      NODE_ENV: "production"
-      TEST_MODULE: erpnext.manufacturing.doctype.workstation_type.test_workstation_type
+    timeout-minutes: 75
     strategy:
       fail-fast: false
       matrix:
         arm: [develop, control]
-    services:
-      mysql:
-        image: mariadb:10.6
-        env:
-          MARIADB_ROOT_PASSWORD: 'root'
-        ports:
-          - 3306:3306
-        options: --health-cmd="mariadb-admin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+    container:
+      image: ghcr.io/frappe/erpnext-ci-mariadb@sha256:9f597e5f229ee27476b807c958ffa63cc5f2a303ff91e7e2b7189262521473eb
+    defaults:
+      run:
+        shell: bash
+    env:
+      HOME: /home/ci
+      CI_DB_DATADIR: /home/ci/db-ram/data
+      LOGS: /tmp/repro-logs
     steps:
       - name: Clone
         uses: actions/checkout@v6
 
+      # bench get-app clones the checkout, so the control change has to be committed.
       - name: Control arm patch
         if: matrix.arm == 'control'
-        run: python .github/repro/control.py erpnext/manufacturing/doctype/job_card/job_card.py
+        run: |
+          python .github/repro/control.py erpnext/manufacturing/doctype/job_card/job_card.py
+          git -c safe.directory="$GITHUB_WORKSPACE" -c user.name="CyberNative AI LLC" \
+            -c user.email="hello@cybernative.ai" commit -qam "control: never move the slot start earlier"
 
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.14'
+      - name: Prepare
+        run: |
+          echo "127.0.0.1 test_site" >> /etc/hosts
+          install -d -m 0777 "$LOGS"
+          printf '%s\n' "$(python --version) node $(node --version) $(git -c safe.directory="$GITHUB_WORKSPACE" rev-parse HEAD)" | tee "$LOGS/env.txt"
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          check-latest: true
-
-      - name: Add to Hosts
-        run: echo "127.0.0.1 test_site" | sudo tee -a /etc/hosts
+      - name: Start DB
+        run: |
+          export HOME=/home/ci
+          bash "${GITHUB_WORKSPACE}"/.github/helper/start-db.sh 2>&1 | tee "$LOGS/start-db.txt"
+        env:
+          SKIP_SYSTEM_SETUP: "1"
 
       - name: Install
-        run: bash ${GITHUB_WORKSPACE}/.github/helper/install.sh
+        run: |
+          set -o pipefail
+          export HOME=/home/ci
+          bash "${GITHUB_WORKSPACE}"/.github/helper/install.sh 2>&1 | tee "$LOGS/install.txt"
         env:
           DB: mariadb
           TYPE: server
           FRAPPE_BRANCH: b53b0911ffcca3826745e3418b415edf268b49fb
           CI_GITHUB_TOKEN: ${{ github.token }}
+          DB_HOST: 127.0.0.1
+          DB_USER_HOST: '%'
+          SKIP_SYSTEM_SETUP: "1"
+          SKIP_WKHTMLTOX_SETUP: "1"
 
       - name: Run test module
         run: |
-          cd ~/frappe-bench/
-          bench --site test_site set-config allow_tests true
           set -o pipefail
-          bench --site test_site run-tests --module "$TEST_MODULE" --lightmode 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+          export HOME=/home/ci
+          su -m "$ERPNEXT_CI_USER" -s /bin/bash <<'EOF' 2>&1 | tee "$LOGS/test-output.txt"
+          cd ~/frappe-bench/
+          git -C apps/erpnext rev-parse HEAD
+          grep -n "args.planned_start_time = " apps/erpnext/erpnext/manufacturing/doctype/job_card/job_card.py
+          bench --site test_site set-config allow_tests true
+          bench --site test_site run-tests --module "$TEST_MODULE" --lightmode
+          EOF
 
-      - name: Upload test output
+      # Annotations are readable without a login; the full output also goes to a results branch.
+      - name: Report
+        if: always()
+        run: |
+          report() {
+            local level=$1 title=$2 file=$3 body
+            [ -f "$file" ] || { echo "::$level title=$title::(no file)"; return; }
+            body=$(tail -n 60 "$file" | cut -c1-300)
+            body=${body//'%'/'%25'}
+            body=${body//$'\r'/'%0D'}
+            body=${body//$'\n'/'%0A'}
+            echo "::$level title=$title::$body"
+          }
+          report notice "env-${{ matrix.arm }}" "$LOGS/env.txt"
+          if [ -f "$LOGS/test-output.txt" ]; then
+            report notice "test-output-${{ matrix.arm }}" "$LOGS/test-output.txt"
+          else
+            report error "install-${{ matrix.arm }}" "$LOGS/install.txt"
+            report error "start-db-${{ matrix.arm }}" "$LOGS/start-db.txt"
+          fi
+
+      - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-output-${{ matrix.arm }}
-          path: ${{ runner.temp }}/test-output.txt
+          name: logs-${{ matrix.arm }}
+          path: /tmp/repro-logs
           if-no-files-found: warn
 
   results:
@@ -88,6 +136,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -eu
+          mkdir -p out
           curl -fsSL -H "Authorization: Bearer $GH_TOKEN" \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" > out/jobs.json
           printf '%s\n' "run ${GITHUB_RUN_ID} attempt ${GITHUB_RUN_ATTEMPT} sha ${GITHUB_SHA}" > out/RUN.txt
@@ -99,4 +148,5 @@ jobs:
           git commit -q -m "Test results for run ${GITHUB_RUN_ID}"
           auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
           git -c http.extraheader="AUTHORIZATION: basic $auth" push -q \
-            "https://github.com/${GITHUB_REPOSITORY}" "HEAD:refs/heads/results/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            "https://github.com/${GITHUB_REPOSITORY}" "HEAD:refs/heads/results/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            || { echo "::error title=results-push::push failed"; exit 1; }
